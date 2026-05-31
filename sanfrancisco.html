@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Francisco: Die digitale Spaltung</title>
+    <style>
+        :root {
+            --light-bg: #f9f9fb;
+            --card-bg: #ffffff;
+            --text-dark: #1e272e;
+            --text-muted: #57606f;
+            --crisis-color: #e66767; /* Sanftes Orange-Rot für die Krise (Golden Gate) */
+            --tech-color: #5f27cd;   /* Futuristisches Tech-Violett/Blau */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ecf2;
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Interaktiver Splitscreen */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 75vh;
+            display: flex;
+        }
+
+        .split {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 3rem;
+            transition: flex 0.6s ease-in-out, filter 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .split::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.12;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            z-index: 1;
+        }
+
+        /* Symbolische Bilder für San Francisco */
+        .left::before {
+            background-image: url('https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=1200&q=80'); /* Golden Gate / Stadtstruktur */
+        }
+
+        .right::before {
+            background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80'); /* Digitaler Code / Tech */
+        }
+
+        .left {
+            background: linear-gradient(135deg, #fff2f2, #ffe4e4);
+            border-right: 1px solid #e8ecf2;
+        }
+
+        .right {
+            background: linear-gradient(135deg, #f3f0ff, #ebe4ff);
+        }
+
+        /* Interaktiver Hover-Effekt */
+        .container:has(.left:hover) .left { flex: 1.8; }
+        .container:has(.left:hover) .right { flex: 0.6; filter: blur(1px); }
+        .container:has(.right:hover) .right { flex: 1.8; }
+        .container:has(.right:hover) .left { flex: 0.6; filter: blur(1px); }
+
+        .split:hover::before {
+            transform: scale(1.03);
+            opacity: 0.22;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .content h2 {
+            font-size: 2.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .left h2 { color: #cf6a87; }
+        .right h2 { color: var(--tech-color); }
+
+        .content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* Info-Dashboard Sektion */
+        .dashboard {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard h3 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border-top: 5px solid #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .card.crisis-card { border-color: var(--crisis-color); }
+        .card.tech-card { border-color: var(--tech-color); }
+
+        .card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .stat {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0.5rem 0 1rem 0;
+            display: block;
+        }
+
+        .crisis-card .stat { color: var(--crisis-color); }
+        .tech-card .stat { color: var(--tech-color); }
+
+        /* Interaktive Fakten-Box */
+        .interactive-section {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: #ffffff;
+            border-top: 1px solid #e8ecf2;
+        }
+
+        .btn {
+            background: var(--tech-color);
+            color: #fff;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(95, 39, 205, 0.3);
+        }
+
+        .btn:hover {
+            background: #4b14b5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(95, 39, 205, 0.4);
+        }
+
+        #fact-box {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 60px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem;
+            background: #ffffff;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid #e8ecf2;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>San Francisco: Das digitale Paradoxon</h1>
+        <p>Die tiefe Kluft zwischen Tech-Milliarden und sozioökonomischer Verdrängung</p>
+    </header>
+
+    <!-- Splitscreen-Bereich -->
+    <section class="container">
+        <div class="split left">
+            <div class="content">
+                <h2>Die soziale Krise</h2>
+                <p>Extreme Wohnungsnot, Gentrifizierung und eine der höchsten Obdachlosenraten der USA. Alteingesessene Communities, Künstler und die Mittelschicht werden durch astronomische Lebenshaltungskosten verdrängt.</p>
+            </div>
+        </div>
+        <div class="split right">
+            <div class="content">
+                <h2>Das Tech-Epizentrum</h2>
+                <p>Die Heimat von Silicon Valley, globalen Tech-Giganten und dem neuen KI-Boom. Hier konzentrieren sich unvorstellbares Risikokapital, hochbezahlte Ingenieure und die digitale Infrastruktur der Zukunft.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Sektion -->
+    <section class="dashboard">
+        <h3>Sozialräumliche Disparitäten im Fokus</h3>
+        <div class="grid">
+            <div class="card crisis-card">
+                <h4>Wohnungsnot</h4>
+                <span class="stat">> 1,2 Mio. $</span>
+                <p>Der durchschnittliche Hauspreis macht normales Wohnen für Durchschnittsverdiener oder Servicekräfte unmöglich.</p>
+            </div>
+            <div class="card tech-card">
+                <h4>Wohlstands-Boom</h4>
+                <span class="stat">#1 weltweit</span>
+                <p>San Francisco und die Bay Area weisen eine der höchsten Milliardärsdichten pro Kopf weltweit auf.</p>
+            </div>
+            <div class="card crisis-card">
+                <h4>Zwei-Klassen-Kultur</h4>
+                <span class="stat">Tech-Shuttles</span>
+                <p>Private Luxusbusse für Tech-Mitarbeiter blockieren öffentliche Haltestellen und symbolisieren die sichtbare Trennung der Stadt.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interaktive Fakten-Box -->
+    <section class="interactive-section">
+        <h3 style="margin-bottom: 0.5rem;">Erfahre mehr über San Franciscos Wandel</h3>
+        <p style="margin-bottom: 2rem; color: var(--text-muted);">Klicke auf den Button, um die Disparitäten genauer zu verstehen.</p>
+        <button class="btn" onclick="showNextFact()">Nächsten Fakt anzeigen</button>
+        <div id="fact-box">Klicke auf den Button, um zu starten...</div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Geografische Fallstudie: San Francisco. Entwickelt für Bildungszwecke.</p>
+    </footer>
+
+    <script>
+        const facts = [
+            "Fakt 1: San Francisco erlebt eine 'Tech-Gentrifierung': Ganze Stadtteile wie der Mission District verloren ihre traditionelle Latino-Kultur, weil Mieten für Tech-Arbeiter saniert wurden.",
+            "Fakt 2: Die Disparität ist extrem sichtbar: Während in den schicken Büros des 'Tenderloin'-Bezirks milliardenschwere KI-Start-ups sitzen, herrscht direkt vor den Türen auf den Straßen bittere Armut.",
+            "Fakt 3: Viele Lehrer, Polizisten und Krankenpfleger können es sich nicht mehr leisten, in der Stadt zu wohnen, und müssen täglich stundenlang aus dem weiten Umland pendeln.",
+            "Fakt 4: Der 'Doom Loop' (Abwärtsspirale) nach der Pandemie führte dazu, dass viele Geschäfte in der Innenstadt schlossen, während der Tech-Sektor vermehrt ins Homeoffice abwanderte."
+        ];
+
+        let currentFactIndex = 0;
+
+        function showNextFact() {
+            const factBox = document.getElementById('fact-box');
+            factBox.style.opacity = 0;
+            
+            setTimeout(() => {
+                factBox.innerText = facts[currentFactIndex];
+                factBox.style.opacity = 1;
+                currentFactIndex = (currentFactIndex + 1) % facts.length;
+            }, 200);
+        }
+    </script>
+</body>
+</html>
